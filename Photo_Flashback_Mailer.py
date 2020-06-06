@@ -22,7 +22,6 @@ msg['Subject'] = 'Zeitreise'
 msg['From'] = config.mail_from
 msg['To'] = ', '.join(config.mail_to)
 
-# Open the files in binary mode.  Use imghdr to figure out the MIME subtype for each specific image.
 for file in files_of_today:
     (filedir, filename) = os.path.split(file)
     msgText = MIMEText('<img src="cid:%s"><br>' % (filename), 'html') 
