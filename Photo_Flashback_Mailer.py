@@ -16,24 +16,25 @@ from email.mime.image import MIMEImage
 today = datetime.now().strftime('%m-%d')
 files_of_today = glob.glob(config.directory + "*-" + today + "*.*")
 
-# Set up an email with embedded pictures/movies
-msg = MIMEMultipart()
-msg['Subject'] = 'Zeitreise'
-msg['From'] = config.mail_from
-msg['To'] = ', '.join(config.mail_to)
+if len(files_of_today) > 0:
+    # Set up an email with embedded pictures/movies
+    msg = MIMEMultipart()
+    msg['Subject'] = 'Zeitreise'
+    msg['From'] = config.mail_from
+    msg['To'] = ', '.join(config.mail_to)
 
-for file in files_of_today:
-    (filedir, filename) = os.path.split(file)
-    msgText = MIMEText('<img src="cid:%s"><br>' % (filename), 'html') 
-    msg.attach(msgText)
+    for file in files_of_today:
+        (filedir, filename) = os.path.split(file)
+        msgText = MIMEText('<img src="cid:%s"><br>' % (filename), 'html') 
+        msg.attach(msgText)
 
-    with open(file, 'rb') as fp:
-        img = MIMEImage(fp.read())
-    
-    img.add_header('Content-ID', '<{}>'.format(filename))
-    msg.attach(img)
+        with open(file, 'rb') as fp:
+            img = MIMEImage(fp.read())
+        
+        img.add_header('Content-ID', '<{}>'.format(filename))
+        msg.attach(img)
 
-# Send mail.
-with smtplib.SMTP(config.smtp_server, config.smtp_port) as s:
-    s.login(config.smtp_user, config.smtp_pass)
-    s.send_message(msg)
+    # Send mail.
+    with smtplib.SMTP(config.smtp_server, config.smtp_port) as s:
+        s.login(config.smtp_user, config.smtp_pass)
+        s.send_message(msg)
